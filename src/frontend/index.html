@@ -1,0 +1,72 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.4.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v1.4.1/mapbox-gl.css' rel='stylesheet' />
+
+<style>
+  #map {
+    width: 100%;
+    height: 100vh;
+  }
+  #sidebar {
+    width: 300px;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: white;
+    border: 1px solid #222;
+    z-index: 999;
+    padding: 10px;
+  }
+  .shop {
+    width: 10px;
+    height: 10px;
+    background-color: black;
+    cursor: pointer;
+  }
+  .billa {
+    background-color: yellow;
+  }
+  .tesco, .tesco-express {
+    background-color: blue;
+  }
+  .terno {
+    background-color: red;
+  }
+</style>
+
+<div id="sidebar">
+
+  <h2>Mapa supermarketov</h2>
+
+  <p id="shop-name"></p>
+</div>
+<div id='map'></div>
+
+<script>
+
+// Map initialization
+mapboxgl.accessToken = 'pk.eyJ1IjoidGtyYW1hciIsImEiOiJjajhhcHNmd2MwZ281MzNwODc3ankxNWE1In0.iOn_FeucyCXBjefGaTfPRQ';
+var map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/streets-v11',
+  center: [17.14548780521352, 48.139264524655374],
+  zoom: 11.6
+});
+
+/*
+$.get('/data.json', function(data) {
+  data.forEach(function(record) {
+    var el = document.createElement('div');
+    el.className = 'shop ' + record.shopClass;
+    el.addEventListener('click', function() {
+      $('#shop-name').text(record.name);
+    });
+    new mapboxgl.Marker(el)
+      .setLngLat(record.geo.coordinates)
+      .addTo(map);
+  });
+});
+*/
+</script>
+<script src="./main.js"></script>
