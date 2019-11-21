@@ -12,6 +12,18 @@ const URL_POIS_MOCKUP = "file:///home/whoami/SOJEC/gis-local/src/frontend/mock/p
 var categoriesHashMap = undefined
 var categoriesNumber = 0
 
+// lambda debug helper function - debug safe way to reference HTML elements
+let HTML_REFERENCE_DEBUG_HELPER = (elementID) => 
+{
+    let element = document.getElementById(elementID);
+    if(typeof(element) == 'undefined' || element == null) // DEBUG HELP
+    {
+        alert("CAN NOT FIND HTML ELEMENT!\n looking for: \"" + elementID+ "\"");
+        return null;
+    }
+
+    return element;
+}
 
 // make synchronous HTTP request to inURL
 function SynchronousHTTPRequest(inURL)
@@ -38,12 +50,9 @@ function PopulateCategories()
     var categories = SynchronousHTTPRequest(URL_CATEGORIES_MOCKUP); // TEMP - change mockup path
     
     const categoryTableID = "categoryTable"
-    let categoryTable = document.getElementById(categoryTableID);
-    if(typeof(categoryTable) == 'undefined' || categoryTable == null) // DEBUG HELP
-    {
-        alert("CAN NOT FIND HTML TABLE FOR CATEGORIES!\n looking for: \"" + categoryTableID+ "\"");
+    let categoryTable = HTML_REFERENCE_DEBUG_HELPER(categoryTableID);
+    if(!categoryTable)
         return false;
-    }
 
     categoriesHashMap = []
     categoriesNumber = 0
