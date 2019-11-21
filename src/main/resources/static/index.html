@@ -52,9 +52,7 @@ var map = new mapboxgl.Map({
   zoom: 11.6
 });
 $.get('/data.json', function(data) {
-	console.log(data)
-	console.log(data.arr)
- /* data.arr.forEach(function(record) {
+  	data.forEach(function(record) {
     var el = document.createElement('div');
     el.className = 'shop ' + record.shopClass;
     el.addEventListener('click', function() {
@@ -63,6 +61,6 @@ $.get('/data.json', function(data) {
     new mapboxgl.Marker(el)
       .setLngLat(record.geo.coordinates)
       .addTo(map);
-  });*/
+  });
 });
 </script>
