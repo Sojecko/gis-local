@@ -1,0 +1,4 @@
+Testovaci browser:
+	$ chromium-browser -disable-web-security --disable-gpu --user-data-dir=~/chromeTemp
+
+TEMP znacka v kode - temporary - treba zmenit/vymazat
