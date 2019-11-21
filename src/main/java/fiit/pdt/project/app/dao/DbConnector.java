@@ -36,5 +36,26 @@ public class DbConnector {
         	System.out.println(ex);
         }
 	}
+	
+	public String query(String statement) {
+		String result = "";
+		
+
+        try (Connection con = DriverManager.getConnection(url, user, password);
+                Statement st = con.createStatement();
+                ResultSet rs = st.executeQuery(statement)) {
+
+            while (rs.next()) {
+                result += rs.getString(1);
+            }
+            
+            
+        } catch (SQLException ex) {
+        	System.out.println(ex);
+        	return "";
+        }
+        
+        return result;
+	}
 
 }

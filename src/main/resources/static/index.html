@@ -18,6 +18,21 @@
     z-index: 999;
     padding: 10px;
   }
+  .shop {
+    width: 10px;
+    height: 10px;
+    background-color: black;
+    cursor: pointer;
+  }
+  .billa {
+    background-color: yellow;
+  }
+  .tesco, .tesco-express {
+    background-color: blue;
+  }
+  .terno {
+    background-color: red;
+  }
 </style>
 
 <div id="sidebar">
@@ -35,5 +50,19 @@ var map = new mapboxgl.Map({
   style: 'mapbox://styles/mapbox/streets-v11',
   center: [17.14548780521352, 48.139264524655374],
   zoom: 11.6
+});
+$.get('/data.json', function(data) {
+	console.log(data)
+	console.log(data.arr)
+ /* data.arr.forEach(function(record) {
+    var el = document.createElement('div');
+    el.className = 'shop ' + record.shopClass;
+    el.addEventListener('click', function() {
+      $('#shop-name').text(record.name);
+    });
+    new mapboxgl.Marker(el)
+      .setLngLat(record.geo.coordinates)
+      .addTo(map);
+  });*/
 });
 </script>
