@@ -3,7 +3,7 @@
 <link href='https://api.mapbox.com/mapbox-gl-js/v1.4.1/mapbox-gl.css' rel='stylesheet' />
 
 <style>
-  #map {
+  #poisMap {
     width: 100%;
     height: 100vh;
   }
@@ -18,41 +18,28 @@
     z-index: 999;
     padding: 10px;
   }
-  .shop {
-    width: 10px;
-    height: 10px;
-    background-color: black;
-    cursor: pointer;
-  }
-  .billa {
-    background-color: yellow;
-  }
-  .tesco, .tesco-express {
-    background-color: blue;
-  }
-  .terno {
-    background-color: red;
-  }
 </style>
 
-<div id="sidebar">
+<div id="sidebar" style="max-width: 100%; max-height: 100%;">
+  
+      <div>
+        <h2>Attraction categories:</h2>  
+        <table id="categoryTable"></table>
+      </div>
 
-  <h2>Mapa supermarketov</h2>
+      <div style="padding-top: 10%;">
+        <button id="resetPathButton" onclick="ResetPath()" style="width: 100%; display: none;">RESET PATH</button>
+      </div>
 
-  <p id="shop-name"></p>
+  
+  </table>
 </div>
-<div id='map'></div>
+<div id='poisMap'></div>
 
 <script>
-mapboxgl.accessToken = 'pk.eyJ1IjoidGtyYW1hciIsImEiOiJjajhhcHNmd2MwZ281MzNwODc3ankxNWE1In0.iOn_FeucyCXBjefGaTfPRQ';
-var map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/streets-v11',
-  center: [17.14548780521352, 48.139264524655374],
-  zoom: 11.6
-});
+/*
 $.get('/data.json', function(data) {
-  	data.forEach(function(record) {
+  data.forEach(function(record) {
     var el = document.createElement('div');
     el.className = 'shop ' + record.shopClass;
     el.addEventListener('click', function() {
@@ -63,4 +50,6 @@ $.get('/data.json', function(data) {
       .addTo(map);
   });
 });
+*/
 </script>
+<script src="./main.js"></script>

@@ -22,8 +22,9 @@ public class GreetingController {
     }
 	
 	@RequestMapping(
-		    value = "/route.json", 
-		    method = RequestMethod.POST)
+		    value = "/path.json", 
+		    //method = RequestMethod.POST,
+		    produces = MediaType.APPLICATION_JSON_VALUE)
 	public String process(@RequestBody(required=false) Map<String, Object> payload) {
 		if(!payload.equals(null)) {
 			System.out.println(payload.values());
