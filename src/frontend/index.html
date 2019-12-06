@@ -18,32 +18,21 @@
     z-index: 999;
     padding: 10px;
   }
-  .shop {
-    width: 10px;
-    height: 10px;
-    background-color: black;
-    cursor: pointer;
-  }
-  .billa {
-    background-color: yellow;
-  }
-  .tesco, .tesco-express {
-    background-color: blue;
-  }
-  .terno {
-    background-color: red;
-  }
 </style>
 
-<div id="sidebar">
-
-  <h2>Attraction categories:</h2>
+<div id="sidebar" style="max-width: 100%; max-height: 100%;">
   
-  <table id="categoryTable">
+      <div>
+        <h2>Attraction categories:</h2>  
+        <table id="categoryTable"></table>
+      </div>
 
+      <div style="padding-top: 10%;">
+        <button id="resetPathButton" onclick="ResetPath()" style="width: 100%; display: none;">RESET PATH</button>
+      </div>
+
+  
   </table>
-
-  <p id="shop-name"></p>
 </div>
 <div id='poisMap'></div>
 

@@ -9,6 +9,13 @@ const URL_TYPES = SERVER+"/data.json"
 // TEMP - MOCKUP URLs
 const URL_CATEGORIES_MOCKUP = "file:///home/whoami/SOJEC/gis-local/src/frontend/mock/categories.json"
 const URL_POIS_MOCKUP = "file:///home/whoami/SOJEC/gis-local/src/frontend/mock/pois.json"
+const URL_PATH_MOCKUP = "file:///home/whoami/SOJEC/gis-local/src/frontend/mock/path.json"
+// TEMP - REPLACE MOCKUP URL's WITH THIS
+const URL_CATEGORIE = "categories.json"
+const URL_POIS = "pois.json"
+const URL_PATH = "path.json"
+
+actualPathID = 0
 
 const colorList = 
 [
@@ -49,16 +56,144 @@ var GET_COLOR_BY_ID = (inID) =>
     return (inID < colorList.length)? colorList[inID] : defaultColor;
 }
 
-// make synchronous HTTP request to inURL
-function SynchronousHTTPRequest(inURL)
+/* actState:
+* 0 - no point selected
+* 1 - 1 point selected
+* 2 - 2 points selected
+*/
+var PathStateMachine =
+{
+    "source" : [0,0],
+    "destination" : [0,0],
+    "actState" : 0,
+    "GetNextState" : function(){this.actState=(++this.actState)%3;}
+}
+
+// state machine of path selection implementation
+function PathStateMachineSwitch(inPoint)
+{
+    PathStateMachine.GetNextState();
+
+    switch(PathStateMachine.actState)
+    {
+        case 0: 
+            ResetPath();
+            break;
+        case 1:
+            PathStateMachine.source = [inPoint.lng, inPoint.lat];
+            ToggleResetPathButton(true);
+            break;
+        case 2:
+            PathStateMachine.destination = [inPoint.lng, inPoint.lat];
+            // true for path from source to destination, false for start and destination from answer
+            DrawPath(GetPath(PathStateMachine.source, PathStateMachine.destination, true));
+            break;
+        default:
+            PathStateMachine.actState = 0;
+    }
+}
+
+function ResetPath()
+{
+    PathStateMachine.actState = 0;
+    PathStateMachine.source = PathStateMachine.destination = [0,0];
+    ClearAllPaths();
+    ToggleResetPathButton(false);
+}
+
+function ToggleResetPathButton(toggle)
+{
+    let resetButon = document.getElementById('resetPathButton');
+    let value = (toggle)? "block" : "none";
+    resetButon.style.display=value; // block for displaying
+}
+
+function GetPath(inSource, inDestination, pathFromClickedPoints)
+{
+    receivedPath = SynchronousPOSTHTTPRequest(URL_PATH_MOCKUP, {"source" : inSource, "destination" : inDestination});
+
+    if(pathFromClickedPoints)
+    {
+        // remove if you dont want to begin route from click
+        if(inSource != null && inSource != [0,0])
+            receivedPath[0].geo.coordinates.unshift(inSource)
+
+        // remove if you dont want to route end from click
+        if(inDestination != null && inDestination != [0,0])
+            receivedPath[0].geo.coordinates.push(inDestination)
+    }
+
+    return receivedPath[0].geo;
+}
+
+function DrawPath(geometryPath)
+{
+    let pathLayer =
+    {
+        "id": actualPathID.toString(),
+        "type": "line",
+        "source": 
+        {
+            "type": "geojson",
+            "data": 
+            {
+                "type": "Feature",
+                "properties": {},
+                "geometry": geometryPath
+            }
+        },
+        "layout": {
+        "line-join": "round",
+        "line-cap": "round"
+        },
+        "paint": {
+        "line-color": "#000",
+        "line-width": 4
+        }
+    }
+
+    map.addLayer(pathLayer);
+}
+
+function ClearAllPaths()
+{
+    if(map.getLayer(actualPathID.toString()) != undefined)
+    {
+        map.removeLayer(actualPathID.toString());
+        actualPathID++;
+    }
+}
+
+// make synchronous GET HTTP request to inURL
+function SynchronousGETHTTPRequest(inURL)
 {
     try 
     {
-        var xmlHttp = new XMLHttpRequest();
+        let xmlHttp = new XMLHttpRequest();
 
         // false for synchronous request
         xmlHttp.open("GET", inURL, false);
         xmlHttp.send( null );
+        return JSON.parse(xmlHttp.responseText);
+    }
+    catch(err) 
+    {
+        alert(err);  // DEBUG HELP - try/catch is OPTIONAL
+        return null;
+    }
+}
+
+// make synchronous POST HTTP request to inURL
+function SynchronousPOSTHTTPRequest(inURL, inBody)
+{
+    try 
+    {
+        let xmlHttp = new XMLHttpRequest();
+
+        // false for synchronous request
+        xmlHttp.open("POST", inURL, false);
+        xmlHttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        xmlHttp.send(JSON.stringify(inBody));
         return JSON.parse(xmlHttp.responseText);
     }
     catch(err) 
@@ -109,7 +244,7 @@ function PopulateCategories()
     let categoryTable = document.getElementById(categoryTableID);
     categoryTable = HTML_REFERENCE_DEBUG_HELPER(categoryTable, categoryTableID); // OPTIONAL
     
-    var categories = SynchronousHTTPRequest(URL_CATEGORIES_MOCKUP); // TEMP - change mockup path
+    var categories = SynchronousGETHTTPRequest(URL_CATEGORIES_MOCKUP); // TEMP - change mockup path
     categoriesHashMap = [];
     categoriesNumber = 0;
 
@@ -220,7 +355,7 @@ function PopulateMap()
 {
     IS_CATEGORY_MAP_INITIALIZED() // OPTIONAL - recommended
 
-    let pois = SynchronousHTTPRequest(URL_POIS_MOCKUP)
+    let pois = SynchronousGETHTTPRequest(URL_POIS_MOCKUP)
 
     poisMapID = "poisMap";
     let poisMap = document.getElementById(poisMapID);
@@ -262,5 +397,11 @@ map.on("load", function()
         // get all pois from BE
         PopulateMap();
     }
+});
+
+// set next path find state on map click
+map.on('click', function (click) {
+    let clickCoords = click.lngLat;
+    PathStateMachineSwitch(clickCoords)  
 });
 
